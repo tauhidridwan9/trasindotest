@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\CustomerController;
@@ -31,7 +31,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/customer/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
 });
 
+Route::group(['middleware' => ['auth']], function(){
 
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+});
 
 // Route umum
 Route::get('/home', [HomeController::class, 'index'])->name('home');
