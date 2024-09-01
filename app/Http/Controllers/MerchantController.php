@@ -9,6 +9,25 @@ use Illuminate\Support\Facades\Auth;
 
 class MerchantController extends Controller
 {
+    // App/Http/Controllers/MerchantController.php
+    public function deliverOrder(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Pastikan hanya pesanan dengan status 'paid' yang bisa dikirim
+        if ($order->status !== 'paid') {
+            return redirect()->route('merchant.orders')->with('error', 'Only paid orders can be delivered.');
+        }
+
+        // Update status pesanan menjadi 'delivered'
+        $order->status = 'delivered';
+        $order->save();
+
+        // Redirect ke halaman yang sesuai setelah pengiriman
+        return redirect()->route('merchant.orders')->with('success', 'Order has been delivered.');
+    }
+
+
     public function dashboard()
     {
         $merchant = auth()->user(); // Mendapatkan merchant yang sedang login
@@ -18,7 +37,7 @@ class MerchantController extends Controller
             abort(404, 'Merchant not found.');
         }
 
-        // Mengambil menu berdasarkan merchant_id
+       
         $menus = $merchant->menus;
 
         return view('merchant.dashboard', compact('merchant', 'menus'));
@@ -84,7 +103,7 @@ class MerchantController extends Controller
             'alamat' => 'required|string|max:255',
             'kontak' => 'required|string|max:255',
             'deskripsi' => 'required|string|max:1000',
-            // Add other fields as necessary
+            
         ]);
 
         $merchant->name = $request->input('name');
@@ -93,7 +112,7 @@ class MerchantController extends Controller
         $merchant->kontak = $request->input('kontak');
         $merchant->deskripsi = $request->input('deskripsi');
 
-        // Update other fields as necessary
+        
 
         $merchant->save();
 

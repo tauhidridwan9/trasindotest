@@ -12,27 +12,30 @@ class CustomerController extends Controller
     // Menampilkan dashboard customer
     public function dashboard(Request $request)
     {
-        // Initialize query for menus with eager loading of the merchant
-        $query = Menu::with('merchant'); // Assuming Menu has a merchant relationship
+        $query = Menu::query();
 
-        // Apply search criteria if present
-        if ($request->has('search')) {
-            $searchTerm = $request->input('search');
-            $query->where(function ($query) use ($searchTerm) {
-                $query->where('name', 'LIKE', "%$searchTerm%")
-                ->orWhere('description',
-                    'LIKE',
-                    "%$searchTerm%"
-                )
-                ->orWhere('price', 'LIKE', "%$searchTerm%");
-            });
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%' . $request->input('search') . '%')
+            ->orWhere('description', 'like', '%' . $request->input('search') . '%');
+            
         }
 
-        // Fetch the filtered menus
+        if ($request->filled('price_min')) {
+            $query->where('price', '>=', $request->input('price_min'));
+        }
+
+        if ($request->filled('price_max')) {
+            $query->where('price', '<=', $request->input('price_max'));
+        }
+
         $menus = $query->get();
 
-        return view('customer.dashboard', compact('menus'));
+        return view('customer.dashboard', [
+                'menus' => $menus,
+            
+            ]);
     }
+
 
 
 
@@ -76,6 +79,9 @@ class CustomerController extends Controller
         return view('customer.orders', compact('orders'));
     }
 
+   
+
+
     // Menampilkan detail pesanan
     public function orderDetails(Order $order)
     {
@@ -87,12 +93,10 @@ class CustomerController extends Controller
     }
 
     
-    public function createOrder(Request $request)
+    public function createOrder($menuId)
     {
-        $menus = Menu::all();
-        $menu_id = $request->input('menu_id');
-
-        return view('customer.order-create', compact('menu_id','menus'));
+        $menu = Menu::findOrFail($menuId);
+        return view('customer.order-create', compact('menu'));
     }
 
     public function storeOrder(Request $request)
@@ -121,10 +125,42 @@ class CustomerController extends Controller
         return view('customer.invoice', compact('order'));
     }
 
+    
+
+    public function confirmOrder(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Pastikan hanya pesanan dengan status 'delivered' yang bisa dikonfirmasi
+        if ($order->status !== 'delivered') {
+            return redirect()->route('customer.order.list')->with('error', 'Only delivered orders can be confirmed.');
+        }
+
+        // Update status pesanan menjadi 'confirmed'
+        $order->status = 'confirmed';
+        $order->save();
+
+        // Redirect ke halaman yang sesuai setelah konfirmasi
+        return redirect()->route('customer.order.list')->with('success', 'Order has been confirmed.');
+    }
+
     public function viewOrders()
     {
         $orders = Order::where('user_id', auth()->id())->get();
+        $orders->each(function ($order) {
+            $order->total_price = $order->quantity * $order->menu->price;
+        });
         return view('customer.orders', compact('orders'));
+    }
+
+    public function checkOut($id){
+        $checkout = Order::findOrFail($id);
+
+        if($order->user_id !== auth()->id()){
+                abort(403, 'Tidak diizinkan');
+        }
+
+
     }
 
     public function editProfile()

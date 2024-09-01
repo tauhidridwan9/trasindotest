@@ -16,6 +16,13 @@
             <p>Delivery Date: {{ $order->delivery_date }}</p>
             <p>Status: {{ $order->status }}</p>
             <a href="{{ route('merchant.order.details', $order->id) }}" class="btn btn-info">View Details</a>
+
+            @if($order->status === 'paid')
+            <form action="{{ route('merchant.order.deliver', $order->id) }}" method="POST" style="display:inline;">
+                @csrf
+                <button type="submit" class="btn btn-success">Deliver</button>
+            </form>
+            @endif
         </li>
         @endforeach
     </ul>

@@ -10,6 +10,12 @@
     </div>
     @endif
 
+    @if(session('success-reset'))
+    <div class="alert alert-success">
+        {{ session('success-reset') }}
+    </div>
+    @endif
+
 
 
     <div class="container mt-3">

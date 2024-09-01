@@ -2,21 +2,40 @@
 @section('content')
 <div class="container mt-5">
     <h1>Welcome, {{ auth()->user()->name }}!</h1>
+    @if(session('success-reset'))
+    <div class="alert alert-success">
+        {{ session('success-reset') }}
+    </div>
+    @endif
 
 
-    <!-- Search Form -->
     <form action="{{ route('customer.dashboard') }}" method="GET" class="mb-4">
         <div class="row">
-            <div class="col-10">
+            <div class="col-md-4">
                 <input type="text" name="search" value="{{ request()->input('search') }}" class="form-control" placeholder="Search for catering">
             </div>
-            <div class="col-2">
-                <button type="submit" class="btn btn-primary">Search</button>
+
+            <div class="col-md-2">
+                <input type="number" name="price_min" value="{{ request()->input('price_min') }}" class="form-control mb-2" placeholder="Min Price">
+
+            </div>
+            <div class="col-md-2">
+                <input type="number" name="price_max" value="{{ request()->input('price_max') }}" class="form-control" placeholder="Max Price">
             </div>
 
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
         </div>
-
     </form>
+
+
+    @if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
 
     <!-- Displaying Search Results -->
     <h2>Available Menus</h2>

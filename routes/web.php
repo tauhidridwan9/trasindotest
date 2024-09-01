@@ -1,10 +1,13 @@
 <?php
 
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\OrderController;
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,7 +24,14 @@ Route::get('/', function () {
     return view('home');
 });
 
-Auth::routes();
+Auth::routes(['verify' => 'true']);
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/merchant/dashboard', [MerchantController::class, 'dashboard'])->name('merchant.dashboard');
+    Route::get('/customer/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+});
+
+
 
 // Route umum
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -51,7 +61,7 @@ Route::group(['middleware' => ['auth', 'role:merchant']], function () {
     // Rute untuk melihat daftar pesanan
     Route::get('/merchant/orders', [MerchantController::class, 'orderList'])->name('merchant.orders');
     Route::get('/merchant/orders/{order}', [MerchantController::class, 'orderDetails'])->name('merchant.order.details');
-
+    Route::post('/merchant/orders/{order}/deliver', [MerchantController::class, 'deliverOrder'])->name('merchant.order.deliver');
 });
 
 // Route untuk customer dengan middleware
@@ -72,6 +82,12 @@ Route::group(['middleware' => ['auth', 'role:customer']], function () {
     Route::get('/customer/orders/{order}', [CustomerController::class, 'orderDetails'])->name('customer.order.details');
 
     Route::get('/customer/orders', [CustomerController::class, 'viewOrders'])->name('customer.order.list');
+    Route::post('/checkout/{order}', [OrderController::class, 'checkout'])->name('customer.order.checkout');
+    Route::post('/order/complete/{order}', [OrderController::class, 'complete'])->name('customer.order.complete');
+    Route::delete('/customer/order/{order}', [OrderController::class, 'destroy'])->name('customer.order.destroy');
+    Route::post('/customer/orders/{order}/confirm', [CustomerController::class, 'confirmOrder'])->name('customer.order.confirm');
+
+
 
 
 

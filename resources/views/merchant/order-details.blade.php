@@ -14,8 +14,7 @@
             <p><strong>Delivery Date:</strong> {{ $order->delivery_date }}</p>
             <p><strong>Delivery Address:</strong> {{ $order->delivery_address }}</p>
             <p><strong>Status:</strong> {{ $order->status }}</p>
-
-            <!-- You can add more details or actions here -->
+            
         </div>
     </div>
 </div>

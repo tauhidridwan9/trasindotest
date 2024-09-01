@@ -67,6 +67,7 @@
                                 <select id="role" class="form-control" name="role" required>
                                     <option value="merchant">Merchant</option>
                                     <option value="customer">Customer</option>
+                                    <option value="admin">Admin</option>
                                 </select>
                             </div>
                         </div>

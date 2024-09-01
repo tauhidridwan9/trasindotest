@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Auth;
 
+
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
@@ -25,5 +27,23 @@ class ResetPasswordController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected function redirectTo()
+    {
+        $user = auth()->user();
+
+        if ($user->role === 'merchant') {
+            return route('merchant.dashboard');
+        } elseif ($user->role === 'customer') {
+            return route('customer.dashboard');
+        }
+
+        return route('login');
+    }
+
+
+    protected function sendResetResponse(Request $request, $response)
+    {
+        return redirect($this->redirectPath())
+        ->with('success-reset', 'Password berhasil direset.');
+    }
 }
