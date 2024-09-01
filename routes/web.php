@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\CustomerController;
@@ -31,10 +30,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/customer/dashboard', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
 });
 
-Route::group(['middleware' => ['auth']], function(){
 
-    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-});
 
 // Route umum
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -89,10 +85,5 @@ Route::group(['middleware' => ['auth', 'role:customer']], function () {
     Route::post('/order/complete/{order}', [OrderController::class, 'complete'])->name('customer.order.complete');
     Route::delete('/customer/order/{order}', [OrderController::class, 'destroy'])->name('customer.order.destroy');
     Route::post('/customer/orders/{order}/confirm', [CustomerController::class, 'confirmOrder'])->name('customer.order.confirm');
-
-
-
-
-
 
 });

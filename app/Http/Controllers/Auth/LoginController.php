@@ -37,8 +37,6 @@ class LoginController extends Controller
             return redirect()->intended('/merchant/dashboard');
         } elseif ($user->role == 'customer') {
             return redirect()->intended('/customer/dashboard');
-        }elseif($user->role == 'admin') {
-            return redirect()->intended('/admin/dashboard');
         }
 
         // Default redirection if role is not recognized
