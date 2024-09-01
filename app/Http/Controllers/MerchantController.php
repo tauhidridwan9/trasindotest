@@ -9,30 +9,29 @@ use Illuminate\Support\Facades\Auth;
 
 class MerchantController extends Controller
 {
-    // App/Http/Controllers/MerchantController.php
+    
     public function deliverOrder(Request $request, $id)
     {
         $order = Order::findOrFail($id);
 
-        // Pastikan hanya pesanan dengan status 'paid' yang bisa dikirim
+       
         if ($order->status !== 'paid') {
             return redirect()->route('merchant.orders')->with('error', 'Only paid orders can be delivered.');
         }
 
-        // Update status pesanan menjadi 'delivered'
+     
         $order->status = 'delivered';
         $order->save();
 
-        // Redirect ke halaman yang sesuai setelah pengiriman
+    
         return redirect()->route('merchant.orders')->with('success', 'Order has been delivered.');
     }
 
 
     public function dashboard()
     {
-        $merchant = auth()->user(); // Mendapatkan merchant yang sedang login
+        $merchant = auth()->user(); 
 
-        // Pastikan ada data merchant
         if (!$merchant) {
             abort(404, 'Merchant not found.');
         }
@@ -49,10 +48,9 @@ class MerchantController extends Controller
     }
     public function orderList()
     {
-        // Get the current merchant
+     
         $merchant = auth()->user();
-
-        // Get orders where the menu belongs to the current merchant
+      
         $orders = Order::whereHas('menu', function ($query) use ($merchant) {
             $query->where('merchant_id', $merchant->id);
         })->get();
@@ -62,12 +60,19 @@ class MerchantController extends Controller
 
     public function orderDetails(Order $order)
     {
-        // Ensure the order belongs to the merchant
+
+        if (is_null($order->menu)) {
+            dd('Menu not found', $order);
+        }
+
         if ($order->menu->merchant_id !== auth()->id()) {
             abort(403, 'Unauthorized access');
         }
 
+
         return view('merchant.order-details', compact('order'));
+
+
     }
     public function storeMenu(Request $request)
     {

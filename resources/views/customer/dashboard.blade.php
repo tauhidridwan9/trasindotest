@@ -42,25 +42,23 @@
     @if($menus->isEmpty())
     <p>No menus found.</p>
     @else
-    <ul class="list-group">
+    <div class="row m-5 align-items-start justify-content-start row-cols-2 row-cols-lg-5 g-2 g-lg-3">
         @foreach ($menus as $menu)
-        <li class="list-group-item">
-            <div class="row">
-                <div class="col-md-4">
-                    <!-- Displaying the menu image -->
-                    <img src="{{asset('storage/' . $menu->photo)}}" alt="{{ $menu->name }}" class="img-fluid">
-                </div>
-                <div class="col-md-8">
-                    <h5>{{ $menu->name }}</h5>
-                    <p>{{ $menu->description }}</p>
-                    <p>Price: Rp. {{ number_format($menu->price, 0, ',', '.') }}</p>
+        <div class="card m-2 p-3" style="width: 18rem;">
+             .
+                    <img src="{{asset('storage/' . $menu->photo)}}" alt="{{ $menu->name }}" class="object-fit-cover rounded" style="height: 250px;">
+                
+                <div class="card-body">
+                    <h5 class="h4">{{ $menu->name }}</h5>
+                    <p class="text-body-secondary">{{ $menu->description }}</p>
+                    <p class=" h5 text-success">Price: Rp. {{ number_format($menu->price, 0, ',', '.') }}</p>
                     <p><strong>Merchant:</strong> {{ $menu->merchant->name }}</p>
                     <a href="{{ route('customer.order.create', ['menu_id' => $menu->id]) }}" class="btn btn-primary">Order Now</a>
                 </div>
-            </div>
-        </li>
+    
+        </div>
         @endforeach
-    </ul>
+    </div>
     @endif
 
 </div>

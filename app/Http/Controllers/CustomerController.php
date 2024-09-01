@@ -39,21 +39,21 @@ class CustomerController extends Controller
 
 
 
-    // Menampilkan daftar menu
+   
     public function menuList()
     {
-        $menus = Menu::all(); // Mengambil semua menu dari database
+        $menus = Menu::all(); 
         return view('customer.menu-list', compact('menus'));
     }
 
-    // Menampilkan formulir pemesanan
+    
     public function orderForm($menuId)
     {
         $menu = Menu::findOrFail($menuId);
         return view('customer.order-form', compact('menu'));
     }
 
-    // Menyimpan pesanan
+    
     public function placeOrder(Request $request)
     {
         $request->validate([
@@ -67,8 +67,7 @@ class CustomerController extends Controller
         $order->customer_id = auth()->id();
         $order->quantity = $request->quantity;
         $order->delivery_address = $request->delivery_address;
-        $order->status = 'pending'; // Status awal pesanan
-        $order->save();
+        $order->status = 'pending'; 
 
         return redirect()->route('customer.dashboard')->with('success', 'Order placed successfully.');
     }
@@ -82,7 +81,7 @@ class CustomerController extends Controller
    
 
 
-    // Menampilkan detail pesanan
+   
     public function orderDetails(Order $order)
     {
         if ($order->user_id !== auth()->id()) {
@@ -131,16 +130,16 @@ class CustomerController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        // Pastikan hanya pesanan dengan status 'delivered' yang bisa dikonfirmasi
+      
         if ($order->status !== 'delivered') {
             return redirect()->route('customer.order.list')->with('error', 'Only delivered orders can be confirmed.');
         }
 
-        // Update status pesanan menjadi 'confirmed'
+       
         $order->status = 'confirmed';
         $order->save();
 
-        // Redirect ke halaman yang sesuai setelah konfirmasi
+     
         return redirect()->route('customer.order.list')->with('success', 'Order has been confirmed.');
     }
 
@@ -180,7 +179,7 @@ class CustomerController extends Controller
             'kontak' => 'required|string|max:255',
             'deskripsi' => 'required|string',
             'password' => 'nullable|string|min:8|confirmed',
-            // Add other fields as necessary
+          
         ]);
 
         $customer->name = $request->input('name');
@@ -189,7 +188,7 @@ class CustomerController extends Controller
         $customer->kontak = $request->kontak;
         $customer->deskripsi = $request->deskripsi;
 
-        // Update other fields as necessary
+      
 
         $customer->save();
 

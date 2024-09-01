@@ -18,7 +18,7 @@
             <td>{{ $order->delivery_address }}</td>
         </tr>
         <tr>
-            <th>Delivery Address</th>
+            <th>Delivery Date</th>
             <td>{{ $order->delivery_date }}</td>
         </tr>
         <tr>
